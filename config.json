@@ -1,6 +1,6 @@
 {
   "status": "Funktioniert",
-  "statusClass": "offline",
+  "statusClass": "online",
   "nachricht": "Alle Systeme laufen stabil. Viel Spaß auf NexusFM!",
   "link": "https://nexusfm-cdcr.vercel.app"
 }
