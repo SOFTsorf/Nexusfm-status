@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFM | System Status</title>
+    <title>NexusFM | Status & Player</title>
     <style>
         :root {
             --bg-color: #050505;
@@ -24,37 +24,33 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 40px;
-            border-radius: 24px;
+            border-radius: 28px;
             text-align: center;
             width: 100%;
-            max-width: 380px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
         }
 
         .logo {
-            width: 120px;
+            width: 110px;
             height: auto;
-            margin-bottom: 30px;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
         }
 
-        .status-container {
-            margin-bottom: 24px;
-        }
-
+        .status-container { margin-bottom: 20px; }
         .status-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--text-dim);
@@ -63,7 +59,7 @@
         }
 
         .status-value {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -71,24 +67,17 @@
             gap: 10px;
         }
 
-        /* Pulsierender Punkt für Live-Optik */
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .online .status-dot { background-color: var(--success); box-shadow: 0 0 15px var(--success); animation: pulse 2s infinite; }
-        .wartung .status-dot { background-color: var(--warning); box-shadow: 0 0 15px var(--warning); }
-        .offline .status-dot { background-color: var(--error); box-shadow: 0 0 15px var(--error); }
+        .status-dot { height: 10px; width: 10px; border-radius: 50%; }
+        .online .status-dot { background: var(--success); box-shadow: 0 0 12px var(--success); animation: pulse 2s infinite; }
+        .wartung .status-dot { background: var(--warning); box-shadow: 0 0 12px var(--warning); }
+        .offline .status-dot { background: var(--error); box-shadow: 0 0 12px var(--error); }
 
         .message {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-dim);
-            line-height: 1.6;
-            margin-bottom: 35px;
-            padding: 0 10px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            min-height: 1.4rem;
         }
 
         .btn {
@@ -96,31 +85,82 @@
             text-decoration: none;
             background: var(--text-main);
             color: black;
-            padding: 14px;
+            padding: 12px;
             border-radius: 12px;
             font-weight: 600;
             transition: all 0.2s ease;
-            border: 1px solid transparent;
+            margin-bottom: 30px;
         }
 
-        .btn:hover {
-            background: transparent;
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        /* --- MINI PLAYER STYLE --- */
+        .player-box {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        #play-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
             color: white;
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        #play-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .track-info {
+            flex: 1;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .now-playing-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        #track-name {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            color: var(--text-main);
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.7; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.7; }
+            0% { opacity: 0.6; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.6; transform: scale(0.95); }
         }
     </style>
 </head>
 <body>
 
 <div class="glass-card">
-    <img src="nexusfm.png" alt="NexusFM Logo" class="logo">
+    <img src="nexusfm.png" alt="Logo" class="logo">
     
     <div class="status-container">
         <span class="status-label">System Status</span>
@@ -135,32 +175,73 @@
     <div id="nachricht" class="message"></div>
 
     <a href="#" id="webseite-link" class="btn">Webseite besuchen</a>
+
+    <div class="player-box">
+        <div class="player-controls">
+            <button id="play-btn" onclick="togglePlay()">
+                <svg id="play-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="pause-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+            <div class="track-info">
+                <span class="now-playing-label">Live On Air</span>
+                <span id="track-name">Lädt Stream Info...</span>
+            </div>
+        </div>
+    </div>
 </div>
 
+<audio id="audio-player" src="https://stream.laut.fm/nexusfm-stream"></audio>
+
 <script>
-    async function loadStatus() {
+    const audio = document.getElementById('audio-player');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const trackName = document.getElementById('track-name');
+
+    // 1. Status Logik (config.json)
+    async function updateStatus() {
         try {
-            // Cache-Busting, damit Änderungen in GitHub sofort sichtbar sind
-            const response = await fetch('config.json?t=' + Date.now());
-            const data = await response.json();
+            const res = await fetch('config.json?t=' + Date.now());
+            const data = await res.json();
+            document.getElementById('status-text').innerText = data.status;
+            document.getElementById('status-wrapper').className = data.statusClass;
+            document.getElementById('nachricht').innerText = data.nachricht || "";
+            document.getElementById('webseite-link').href = data.link;
+        } catch (e) { console.error("Status Error"); }
+    }
 
-            const statusWrapper = document.getElementById('status-wrapper');
-            const statusText = document.getElementById('status-text');
-            const messageEl = document.getElementById('nachricht');
-            const linkEl = document.getElementById('webseite-link');
-
-            statusText.innerText = data.status;
-            statusWrapper.className = data.statusClass; // online, wartung oder offline
-            messageEl.innerText = data.nachricht || "";
-            linkEl.href = data.link;
-
-        } catch (error) {
-            document.getElementById('status-text').innerText = "Verbindungsfehler";
-            document.getElementById('status-wrapper').className = "offline";
+    // 2. Player Logik
+    function togglePlay() {
+        if (audio.paused) {
+            audio.play();
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+        } else {
+            audio.pause();
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
         }
     }
 
-    loadStatus();
+    // 3. Metadata Logik (Was läuft gerade?)
+    async function updateMetadata() {
+        try {
+            // Wir fragen die laut.fm API ab (Slug: nexusfm-stream)
+            const res = await fetch('https://api.laut.fm/station/nexusfm-stream/current_song');
+            const data = await res.json();
+            if (data && data.title) {
+                trackName.innerText = `${data.artist.name} - ${data.title}`;
+            }
+        } catch (e) {
+            trackName.innerText = "NexusFM Live Stream";
+        }
+    }
+
+    // Initialisierung & Intervalle
+    updateStatus();
+    updateMetadata();
+    setInterval(updateMetadata, 20000); // Alle 20 Sek. Song-Titel aktualisieren
+    setInterval(updateStatus, 60000);   // Jede Minute Status prüfen
 </script>
 
 </body>
