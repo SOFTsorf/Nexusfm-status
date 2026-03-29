@@ -1,6 +1,6 @@
 {
   "status": "Wartungsarbeiten starten bald",
-  "statusClass": "online",
+  "statusClass": "wartung",
   "nachricht": "Wartungsarbeiten starten gelich. Wechsle schnell jetzt zur Webseite, damit du nichts davon mitbekommst.",
   "link": "https://nexusfm-cdcr.vercel.app"
 }
