@@ -1,0 +1,1 @@
+Hinweis: Für statusClass kannst du online, wartung oder offline nutzen (siehe CSS unten).
