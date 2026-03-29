@@ -3,67 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFM Status</title>
+    <title>NexusFM | System Status</title>
     <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(20, 20, 20, 0.7);
+            --accent-blue: #0070f3;
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --success: #00ff88;
+            --warning: #f1c40f;
+            --error: #ff4d4d;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f0f0f;
-            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% -20%, #1a1a1a, #050505);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
-        .container {
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
             text-align: center;
-            background: #1a1a1a;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-width: 400px;
-            width: 90%;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
-        img {
-            max-width: 150px;
-            margin-bottom: 20px;
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
         }
-        .status-box {
-            font-size: 1.2rem;
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
+
+        .status-container {
+            margin-bottom: 24px;
         }
-        /* Status-Farben */
-        .online { color: #2ecc71; border: 1px solid #2ecc71; }
-        .wartung { color: #f1c40f; border: 1px solid #f1c40f; }
-        .offline { color: #e74c3c; border: 1px solid #e74c3c; }
+
+        .status-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .status-value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Pulsierender Punkt für Live-Optik */
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .online .status-dot { background-color: var(--success); box-shadow: 0 0 15px var(--success); animation: pulse 2s infinite; }
+        .wartung .status-dot { background-color: var(--warning); box-shadow: 0 0 15px var(--warning); }
+        .offline .status-dot { background-color: var(--error); box-shadow: 0 0 15px var(--error); }
 
         .message {
-            color: #ccc;
-            font-style: italic;
-            margin-bottom: 25px;
-            min-height: 1.2rem;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 35px;
+            padding: 0 10px;
         }
+
         .btn {
-            display: inline-block;
+            display: block;
             text-decoration: none;
-            background-color: #3498db;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            background: var(--text-main);
+            color: black;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
-        .btn:hover { background-color: #2980b9; }
+
+        .btn:hover {
+            background: transparent;
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <img src="nexusfm.png" alt="NexusFM Logo">
+<div class="glass-card">
+    <img src="nexusfm.png" alt="NexusFM Logo" class="logo">
     
-    <div id="status" class="status-box">Lädt...</div>
+    <div class="status-container">
+        <span class="status-label">System Status</span>
+        <div id="status-wrapper" class="online">
+            <div class="status-value">
+                <span class="status-dot"></span>
+                <span id="status-text">Prüfe...</span>
+            </div>
+        </div>
+    </div>
     
     <div id="nachricht" class="message"></div>
 
@@ -71,33 +138,28 @@
 </div>
 
 <script>
-    // Funktion zum Laden der Konfiguration
     async function loadStatus() {
         try {
-            const response = await fetch('config.json');
+            // Cache-Busting, damit Änderungen in GitHub sofort sichtbar sind
+            const response = await fetch('config.json?t=' + Date.now());
             const data = await response.json();
 
-            const statusEl = document.getElementById('status');
+            const statusWrapper = document.getElementById('status-wrapper');
+            const statusText = document.getElementById('status-text');
             const messageEl = document.getElementById('nachricht');
             const linkEl = document.getElementById('webseite-link');
 
-            // Status setzen
-            statusEl.innerText = "Status: " + data.status;
-            statusEl.className = "status-box " + data.statusClass;
-
-            // Nachricht setzen (falls vorhanden)
+            statusText.innerText = data.status;
+            statusWrapper.className = data.statusClass; // online, wartung oder offline
             messageEl.innerText = data.nachricht || "";
-
-            // Link setzen
             linkEl.href = data.link;
 
         } catch (error) {
-            console.error("Fehler beim Laden der Status-Daten:", error);
-            document.getElementById('status').innerText = "Status: Unbekannt";
+            document.getElementById('status-text').innerText = "Verbindungsfehler";
+            document.getElementById('status-wrapper').className = "offline";
         }
     }
 
-    // Beim Laden der Seite ausführen
     loadStatus();
 </script>
 
