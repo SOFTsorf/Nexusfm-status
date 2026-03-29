@@ -1,6 +1,6 @@
 {
-  "status": "Wartungsarbeiten laufen",
-  "statusClass": "wartung",
-  "nachricht": "Wir sind gleich wieder da.",
+  "status": "Online",
+  "statusClass": "online",
+  "nachricht": "Alle Systeme laufen stabil. (V1536.36)",
   "link": "https://nexusfm-cdcr.vercel.app"
 }
